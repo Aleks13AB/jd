@@ -1,0 +1,36 @@
+1.SELECT film.ocena, count(*) as liczba_filmow
+FROM film
+GROUP by film.ocena
+
+2.SELECT lista_filmow.kategoria, count(*) as liczba_filmow_w_kazdej_kategorii
+FROM lista_filmow
+JOIN kategoria on kategoria.kategoria_id = lista_filmow.FID
+group by lista_filmow.kategoria;
+
+3.SELECT film.tytul, count(*) as liczba_aktorow
+FROM film
+JOIN film_aktor on film_aktor.aktor_id = film.film_id
+group by film.tytul;
+
+
+4.SELECT klient.imie, klient.nazwisko, SUM(platnosc.kwota)
+FROM platnosc
+JOIN klient on klient.klient_id = platnosc.klient_id
+group by klient.imie;
+
+
+5.SELECT film.tytul, SUM
+
+
+6.SELECT kategoria.nazwa, AVG(film.stawka_wypozycz), AVG(film.koszty_wymiany)
+FROM kategoria
+JOIN film_kategoria on film_kategoria.kategoria_id = kategoria.kategoria_id
+join film on film.film_id = film_kategoria.film_id
+group by kategoria.nazwa;
+
+
+7.SELECT klient.imie, klient.nazwisko, AVG(platnosc.kwota)
+FROM klient
+JOIN platnosc on platnosc.klient_id = klient.klient_id
+group by klient.imie;
+

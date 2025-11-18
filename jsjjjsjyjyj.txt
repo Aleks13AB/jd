@@ -1,0 +1,130 @@
+SELECT adres.adres, adres.okreg, miasto.miasto, adres.kod_pocztowy, kraj.kraj
+FROM klient
+JOIN adres ON klient.adres_id = adres.adres_id
+JOIN miasto ON adres.miasto_id = miasto.miasto_id
+JOIN kraj ON miasto.kraj_id = kraj.kraj_id
+WHERE kraj.kraj = 'Poland';
+
+
+
+
+SELECT adres_id FROM adres WHERE okreg = 'Texas';
+
+SELECT * FROM klient
+WHERE adres_id IN (SELECT adres_id FROM adres WHERE okreg = 'Texas');
+
+
+
+
+
+
+SELECT kraj_id FROM kraj WHERE kraj = 'United States';
+
+SELECT miasto_id FROM miasto WHERE kraj_id = (SELECT kraj_id FROM kraj WHERE kraj = 'United States');
+
+SELECT adres_id FROM adres WHERE miasto_id IN (SELECT miasto_id FROM miasto WHERE kraj_id = (SELECT kraj_id FROM kraj WHERE kraj = 'United States'));
+
+SELECT * FROM klient
+WHERE adres_id IN (SELECT adres_id FROM adres WHERE miasto_id IN (SELECT miasto_id FROM miasto WHERE kraj_id = (SELECT kraj_id FROM kraj WHERE kraj = 'United States')));
+
+
+
+SELECT platnosc.kwota
+FROM platnosc
+WHERE platnosc.klient_id IN (
+SELECT klient.klient_id
+FROM klient
+JOIN adres ON klient.adres_id = adres.adres_id
+JOIN miasto ON adres.miasto_id = miasto.miasto_id
+WHERE miasto.miasto = 'London'
+);
+
+
+
+
+SELECT SUM(platnosc.kwota)
+FROM platnosc
+WHERE platnosc.klient_id IN (
+SELECT klient.klient_id
+FROM klient
+JOIN adres ON klient.adres_id = adres.adres_id
+JOIN miasto ON adres.miasto_id = miasto.miasto_id
+WHERE miasto.miasto = 'London'
+);
+
+
+
+SELECT miasto_id, COUNT(*) as ile
+FROM adres
+GROUP BY miasto_id;
+
+SELECT miasto_id, COUNT(*) as ile
+FROM adres
+GROUP BY miasto_id
+HAVING COUNT(*) > 1;
+
+
+-- 2 pozostale nie dzialaja
+
+
+SELECT aktor.aktor_id, aktor.imie, aktor.nazwisko
+FROM aktor
+WHERE aktor.aktor_id IN (
+SELECT film_aktor.aktor_id
+FROM film_aktor
+GROUP BY film_aktor.aktor_id
+HAVING COUNT(film_aktor.film_id) > 20
+);
+
+
+
+
+SELECT film.film_id, film.tytul
+FROM film
+WHERE film.film_id IN (
+SELECT film_kategoria.film_id
+FROM film_kategoria
+JOIN kategoria ON film_kategoria.kategoria_id = kategoria.kategoria_id
+WHERE kategoria.nazwa = 'Akcja'
+);
+
+
+
+SELECT klient.*
+FROM klient
+WHERE klient.adres_id IN (
+SELECT adres.adres_id
+FROM adres
+WHERE adres.miasto_id IN (
+SELECT miasto.miasto_id
+FROM miasto
+WHERE miasto.kraj_id IN (
+SELECT miasto.kraj_id
+FROM miasto
+JOIN adres ON miasto.miasto_id = adres.miasto_id
+JOIN klient ON adres.adres_id = klient.adres_id
+GROUP BY miasto.kraj_id
+HAVING COUNT(klient.klient_id) > 10
+)
+)
+);
+
+
+
+SELECT adres.adres_id, miasto.kraj_id
+FROM adres
+JOIN miasto ON adres.miasto_id = miasto.miasto_id;
+
+
+
+
+
+SELECT film.film_id, film.tytul
+FROM film
+WHERE film.film_id IN (
+SELECT spis.film_id
+FROM spis
+JOIN wypozyczenie ON spis.spis_id = wypozyczenie.spis_id
+GROUP BY spis.film_id
+HAVING COUNT(wypozyczenie.wypozyczenie_id) > 10
+);
